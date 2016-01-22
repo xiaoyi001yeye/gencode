@@ -1,0 +1,8 @@
+@echo off
+set "JAVA_HOME=${jdkPath}"
+set "GRADLE_HOME=${gradlePath}"
+set "JAVA_OPTS=-Dmaven.repo.local=${mavenRepository}"
+set "GRADLE_USER_HOME=D:\target\gradle_cache"
+rem %GRADLE_HOME%\bin\gradle.bat dependencies
+cd /D ${projectRoot}
+%GRADLE_HOME%\bin\gradle.bat build --stacktrace > ${projectRoot}\out.log 2>&1

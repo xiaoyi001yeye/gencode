@@ -1,0 +1,56 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+group = 'com.riil'
+version = '${context.projectMetaInfo.secDevVersion}'
+buildDir = '${targetDirName}'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+sourceSets {
+    main {
+        java.srcDir "${srcDirName}"
+        resources.srcDir "${resourceDirName}"
+    }
+}
+
+repositories {
+    //mavenLocal通过命令行中 set "JAVA_OPTS=-Dmaven.repo.local=D:\target\repository" 参数指定
+    //如果不指定则为maven 默认用户路径
+    mavenLocal()
+    maven {
+        url "http://172.17.189.10:8888/nexus/content/repositories/thirdparty"
+    //url "http://maven.restlet.org"
+    }
+    maven {
+        url "http://172.17.189.10:8888/nexus/content/repositories/RIIL_Releases"
+    }
+    maven {
+        url "http://repo.maven.apache.org/maven2"
+    }
+    maven {
+        url "http://172.17.189.10:8888/nexus/content/groups/public"
+    }
+    maven {
+        url "http://m2.neo4j.org/content/repositories/releases/"
+    }
+    maven {
+        url "http://repository.codehaus.org"
+    }
+}
+
+dependencies {
+    compile group: 'com.riil.server.components', name: 'riil-event-center', version:'6.7.5'
+    compile group: 'com.riil.server.basemodel', name: 'riil-basepojo', version:'6.7.5'
+    compile(group: 'jaxen', name: 'jaxen', version: '1.1.3'){
+        exclude module: 'maven-cobertura-plugin' exclude module:'maven-findbugs-plugin'
+    }
+}
+build.doLast{
+    copy {
+        from "${targetDirName}/libs"
+        into "."
+        rename ('.*', '${context.projectFullName}-${context.projectMetaInfo.secDevVersion}.jar')
+    }
+    delete "${targetDirName}"
+    println("build complate.")
+
+}
+

@@ -1,0 +1,77 @@
+#set($context = $buildContext)
+package $context.packageNamePath;
+
+import java.util.List;
+
+import com.riil.base.pojo.event.DataEventPojo;
+import com.riil.core.logger.SystemLogger;
+import com.riil.core.service.AbsService;
+import com.riil.core.service.ServiceException;
+import com.riil.data.transfer.DataType;
+import com.riil.data.transfer.IDataCallback;
+import com.riil.data.transfer.IDataReceiver;
+import com.riil.eventcenter.service.IEventCenterService;
+
+/**
+* $context.pluginDesc
+* <br>
+*
+* <p>
+    * Create on : $gencodeDate <br>
+    * </p>
+* <br>
+* @author $author <br>
+* @version $context.projectFullName
+* <br>
+* <strong>Modify History:</strong><br>
+* user     modify_date    modify_content<br>
+* -------------------------------------------<br>
+* <br>
+*/
+public class $className extends AbsService{
+    /**
+    * <code>S_LOGGER</code> - S_LOGGER.
+    */
+    private static final SystemLogger S_LOGGER = SystemLogger.getSystemLogger(${className}.class,
+    "3rdEventSend");
+
+    /**
+    * <code>m_dataReceiver</code> - m_dataReceiver.
+    */
+    private IDataReceiver m_dataReceiver;
+
+    /**
+    * @return dataReceiver - {return content description}
+    */
+    public IDataReceiver getDataReceiver() {
+        return m_dataReceiver;
+    }
+    /**
+    * @param dataReceiver - {parameter description}.
+    */
+    public void setDataReceiver(final IDataReceiver dataReceiver) {
+        m_dataReceiver = dataReceiver;
+    }
+
+    /**
+    * subscribeEvent.
+    * @throws ServiceException ServiceException
+    */
+    public void subscribeEvent() throws ServiceException {
+        final IDataCallback<List<DataEventPojo>> t_iDataCallback = new IDataCallback<List<DataEventPojo>>() {
+            @Override
+            public void receive(final List<DataEventPojo> data) {
+                for (DataEventPojo t_dataEventPojo : data) {
+                    S_LOGGER.error("send event id="+t_dataEventPojo.getId());
+                    //try {
+                        //SendHelper.send(t_dataEventPojo);
+                    //} catch (Exception t_e) {
+                    //    S_LOGGER.error(t_e.getMessage(),t_e);
+                    //}
+                }
+            }
+        };
+        m_dataReceiver.subscribe(DataType.event, IEventCenterService.PUSH_MSG_TYPE_EVENTS, t_iDataCallback);
+        S_LOGGER.error("subscribe event OK! m_dataReceiver object id=" + m_dataReceiver+" IDataCallback object id="+t_iDataCallback);
+    }
+}
